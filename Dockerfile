@@ -29,6 +29,16 @@ RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so
 #As Jenkins node
 RUN yum install -y java
 
+#Update git
+RUN yum remove -y git && \
+    yum install -y curl-devel expat-devel gettext-devel openssl-devel zlib-devel perl-ExtUtils-MakeMaker
+
+RUN wget https://www.kernel.org/pub/software/scm/git/git-2.10.0.tar.gz && \
+    tar zxf git-2.10.0.tar.gz && \
+    cd git-2.10.0 && \
+    make -j4 prefix=/usr all install && \
+    cd .. && rm -rf /git-2.10.0*
+
 ENTRYPOINT service sshd start && /bin/bash
 
 CMD ["/bin/bash"]
