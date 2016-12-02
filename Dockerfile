@@ -39,6 +39,22 @@ RUN wget https://www.kernel.org/pub/software/scm/git/git-2.10.0.tar.gz && \
     make -j4 prefix=/usr all install && \
     cd .. && rm -rf /git-2.10.0*
 
+# Install google test
+RUN yum install -y cmake
+ADD ./googletest/release-1.8.0.zip /tmp
+RUN cd /tmp && \
+    unzip /tmp/release-1.8.0.zip && \
+    cd googletest-release-1.8.0 && \
+    cmake -DBUILD_SHARED_LIBS=ON -DBUILD_GTEST=ON -DBUILD_GMOCK=ON -DCMAKE_INSTALL_PREFIX=/usr && \
+    make all install && \
+    cd .. && rm -rf release-1.8.0.zip googletest-release-1.8.0
+
+# Install C-Mock
+ADD ./cmock/master.zip /tmp
+RUN cd /tmp && unzip master.zip && \
+    make -C /tmp/C-Mock-master PREFIX=/usr install && \
+    cd .. && rm -rf /tmp/master.zip /tmp/C-Mock-master
+
 ENTRYPOINT service sshd start && /bin/bash
 
 CMD ["/bin/bash"]
